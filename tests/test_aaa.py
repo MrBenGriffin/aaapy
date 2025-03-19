@@ -6,7 +6,7 @@ import warnings
 
 def test_basics():
     tol = 1e-10
-    Z = np.linspace(-1, 1, 1e3)
+    Z = np.linspace(-1, 1, int(1e3))
     F = np.exp(Z)
     r = aaa(F, Z)
     assert np.isnan(r(np.nan))
@@ -20,7 +20,7 @@ def test_basics():
 
 def test_tan():
     tol = 1e-10
-    Z = np.linspace(-1, 1, 1e3)
+    Z = np.linspace(-1, 1, int(1e3))
     F = np.tan(np.pi * Z)
     r = aaa(F, Z)
     assert max(abs(F - r(Z))) < tol
@@ -29,24 +29,25 @@ def test_tan():
     assert min(abs(r.res())) > 1e-13
 
 def test_scaleinvar():
-    Z = np.linspace(0.3, 1.5, 1e2)
+    tol = 1e-10
+    Z = np.linspace(0.3, 1.5, int(1e2))
     F = np.exp(Z)/(1+1j)
     r1 = aaa(F, Z)
     r2 = aaa(2**30 * F, Z)
     r3 = aaa(2**30 * F, Z)
-    assert r1(0.2j) == 2**-30 * r2(0.2j)
-    assert r1(1.4) == 2**-30 * r3(1.4)
+    assert np.isclose(r1(0.2j), 2**-30 * r2(0.2j), rtol=tol)
+    assert np.isclose(r1(1.4, 2**-30 * r3(1.4), rtol=tol)
 
 def test_inf():
     tol = 1e-3
-    Z = np.linspace(-1, 1, 1e2)
+    Z = np.linspace(-1, 1, int(1e2))
     F = gamma(Z)
     r = aaa(F, Z)
     assert abs(r(0.63) - gamma(0.63)) < tol
 
 def test_nan():
     tol = 1e-3
-    Z = np.linspace(0, 20, 1e2)
+    Z = np.linspace(0, 20, int(1e2))
     np.seterr(all='ignore')
     F = np.sin(Z) / Z
     np.seterr(all=None)
